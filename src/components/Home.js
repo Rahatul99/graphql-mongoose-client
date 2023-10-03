@@ -1,43 +1,27 @@
+import React, { useEffect } from "react";
 import { useQuery } from "@apollo/client";
-import React from "react";
 import { GET_ALL_QUOTES } from "../gqloperations/queries";
 
-const Home = () => {
+export default function Home() {
   const { loading, error, data } = useQuery(GET_ALL_QUOTES);
-  // useEffect(() => {
-  //   fetch("http://localhost:4000", {
-  //     method: "POST",
-  //     headers: {
-  //       "Contet-type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       query: `
-  //       query getAllQuotes{
-  //         quotes{
-  //           name
-  //           by{
-  //             _id
-  //             firstName
-  //           }
-  //         }
-  //       }`,
-  //     }),
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => console.log(data));
-  // }, []);
+
+  if (loading) return <h1>Loading</h1>;
+  if (error) {
+    console.log(error.message);
+  }
+  if (data.quotes.length === 0) {
+    return <h2>No Quotes available</h2>;
+  }
   return (
     <div className="container">
-      <blockquote>
-        <h6>if it works dont touch it</h6>
-        <p className="right-align">~rahat</p>
-      </blockquote>
-      <blockquote>
-        <h6>if it works dont touch it</h6>
-        <p className="right-align">~rahat</p>
-      </blockquote>
+      {data.quotes.map((quote) => {
+        return (
+          <blockquote>
+            <h6>{quote?.name}</h6>
+            <p className="right-align">~{quote?.by?.firstName}</p>
+          </blockquote>
+        );
+      })}
     </div>
   );
-};
-
-export default Home;
+}
